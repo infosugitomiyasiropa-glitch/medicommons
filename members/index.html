@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>会員ページ｜MediCommons</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:         #F4F7F2;
+    --surface:    #FFFFFF;
+    --green:      #3A7D44;
+    --green-dark: #2f6b3c;
+    --teal:       #2A8F7F;
+    --amber:      #C47D1A;
+    --border:     #D8E2D5;
+    --text:       #1C2A1E;
+    --muted:      #7A8A82;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(244,247,242,0.93);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 52px;
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px; font-weight: 400;
+    text-decoration: none; color: var(--text);
+  }
+  .nav-logo span { color: var(--green); }
+  .nav-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; letter-spacing: 1px;
+    padding: 4px 12px; border-radius: 20px;
+    background: rgba(58,125,68,0.1); color: var(--green);
+    font-weight: 700;
+  }
+
+  /* ── MAIN ── */
+  .wrap {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    margin-bottom: 40px;
+    animation: fadeUp 0.6s both;
+  }
+  .page-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; letter-spacing: 3px; color: var(--green);
+    margin-bottom: 8px;
+  }
+  .page-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px; font-weight: 400;
+    margin-bottom: 8px;
+  }
+  .page-desc { font-size: 13px; color: var(--muted); }
+
+  /* ── SECTION ── */
+  .section {
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s both;
+  }
+  .section-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px;
+  }
+  .section-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 16px; font-weight: 700;
+  }
+  .section-sub {
+    font-size: 12px; color: var(--muted);
+  }
+
+  /* ── STOCK CARD ── */
+  .stock-card {
+    background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 60%, var(--teal) 100%);
+    border-radius: 16px; padding: 28px;
+    color: #fff;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .stock-card-text { flex: 1 1 240px; }
+  .stock-card-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; letter-spacing: 2px;
+    color: rgba(255,255,255,0.65); margin-bottom: 6px;
+  }
+  .stock-card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px; font-weight: 400; margin-bottom: 6px;
+  }
+  .stock-card-desc { font-size: 12px; color: rgba(255,255,255,0.75); line-height: 1.7; }
+  .stock-btn {
+    padding: 12px 28px; border-radius: 8px;
+    background: #fff; color: var(--green-dark);
+    font-size: 13px; font-weight: 700;
+    text-decoration: none; white-space: nowrap;
+    transition: opacity 0.2s; flex-shrink: 0;
+  }
+  .stock-btn:hover { opacity: 0.9; }
+
+  /* ── NOTICE LIST ── */
+  .notice-list { display: flex; flex-direction: column; gap: 12px; }
+  .notice-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 20px;
+    display: flex; align-items: flex-start; gap: 16px;
+    transition: box-shadow 0.2s;
+  }
+  .notice-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+  .notice-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px; color: var(--muted);
+    flex-shrink: 0; padding-top: 2px;
+  }
+  .notice-body { flex: 1; }
+  .notice-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .notice-desc { font-size: 12px; color: var(--muted); line-height: 1.7; }
+  .notice-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; font-family: 'Space Mono', monospace;
+    font-weight: 700; text-decoration: none;
+    color: var(--green); margin-top: 8px;
+    transition: gap 0.2s;
+  }
+  .notice-link:hover { gap: 8px; }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px 24px;
+    font-size: 13px; line-height: 2;
+  }
+  .info-box strong { color: var(--text); font-weight: 700; }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding-top: 28px; margin-top: 8px;
+  }
+  .footer-grid {
+    display: flex; flex-wrap: wrap; gap: 24px;
+    justify-content: space-between; align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  .footer-brand { flex: 1 1 200px; }
+  .footer-brand-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px; font-weight: 400; margin-bottom: 4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .footer-brand-logo span { color: var(--green); }
+  .footer-brand-logo img {
+    width: 28px; height: 28px; object-fit: contain;
+  }
+  .footer-brand-sub {
+    font-size: 11px; color: var(--muted);
+    font-family: 'Space Mono', monospace; letter-spacing: 1px;
+  }
+  .footer-info { flex: 1 1 200px; font-size: 12px; line-height: 2; color: var(--muted); }
+  .footer-info strong { color: var(--text); font-size: 11px; }
+  .footer-links-col { flex: 1 1 140px; }
+  .footer-links-col a {
+    display: block; font-size: 12px; color: var(--muted);
+    text-decoration: none; line-height: 2.2;
+    transition: color 0.2s;
+  }
+  .footer-links-col a:hover { color: var(--green); }
+  .footer-copy {
+    text-align: center; font-size: 11px; color: var(--border);
+    font-family: 'Space Mono', monospace; letter-spacing: 1px;
+    padding-bottom: 8px;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html">Medi<span>Commons</span></a>
+  <span class="nav-badge">MEMBERS ONLY</span>
+</nav>
+
+<div class="wrap">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-label">MEMBERS ONLY</div>
+    <h1 class="page-title">会員ページ</h1>
+    <p class="page-desc">参加薬局向けの情報・資料を掲載しています。</p>
+  </div>
+
+  <!-- 在庫情報 -->
+  <div class="section" style="animation-delay:0.1s">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(58,125,68,0.1);">💊</div>
+      <div>
+        <div class="section-title">在庫情報</div>
+        <div class="section-sub">参加薬局の在庫共有スプレッドシート</div>
+      </div>
+    </div>
+    <div class="stock-card">
+      <div class="stock-card-text">
+        <div class="stock-card-label">STOCK INFORMATION</div>
+        <div class="stock-card-title">在庫情報一覧</div>
+        <div class="stock-card-desc">
+          参加薬局の融通可能在庫を一覧で確認できます。<br>
+          自局のシートに入力・更新してください。
+        </div>
+      </div>
+      <a class="stock-btn" href="https://docs.google.com/spreadsheets/d/1Y1F3Y5Z5vrCNiZ069an7qKRSQ8DRFYhL/edit" target="_blank" rel="noopener">スプレッドシートを開く →</a>
+    </div>
+  </div>
+
+  <!-- お知らせ・資料 -->
+  <div class="section" style="animation-delay:0.2s">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(196,125,26,0.1);">📋</div>
+      <div>
+        <div class="section-title">お知らせ・資料</div>
+        <div class="section-sub">会員向けのお知らせ・配布資料</div>
+      </div>
+    </div>
+    <div class="notice-list">
+      <div class="notice-item">
+        <div class="notice-date">2025.11.15</div>
+        <div class="notice-body">
+          <div class="notice-title">使用済み注射針等の医療廃棄物回収サービスの再開について</div>
+          <div class="notice-desc">ワタキューセイモア株式会社との委託契約に基づく医療廃棄物回収サービスを再開しました。詳細は資料をご確認ください。</div>
+          <a class="notice-link" href="../medical-waste-collection.pdf" target="_blank" rel="noopener">資料を見る →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- お問い合わせ -->
+  <div class="section" style="animation-delay:0.3s">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(42,143,127,0.1);">📞</div>
+      <div>
+        <div class="section-title">お問い合わせ</div>
+        <div class="section-sub">事務局への連絡先</div>
+      </div>
+    </div>
+    <div class="info-box">
+      <strong>杉戸町商工会内　杉戸・宮代薬剤師会事務局</strong><br>
+      〒345-0036　埼玉県北葛飾郡杉戸町杉戸3-9-10<br>
+      ココティすぎと複合施設2階<br>
+      TEL：0480-32-3719　FAX：0480-32-3919
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-brand-logo">
+          <img src="../IMG_4080.png" alt="メディコ">
+          Medi<span>Commons</span>
+        </div>
+        <div class="footer-brand-sub">薬局間相互融通の枠組み</div>
+      </div>
+      <div class="footer-info">
+        <strong>杉戸町商工会内　杉戸・宮代薬剤師会事務局</strong><br>
+        〒345-0036<br>
+        埼玉県北葛飾郡杉戸町杉戸3-9-10<br>
+        ココティすぎと複合施設2階<br>
+        TEL：0480-32-3719　FAX：0480-32-3919
+      </div>
+      <div class="footer-links-col">
+        <a href="../index.html">← トップページへ</a>
+        <a href="https://r.goope.jp/sugimiya-pa/" target="_blank" rel="noopener">薬剤師会HP（グーぺ）</a>
+      </div>
+    </div>
+    <div class="footer-copy">© 杉戸・宮代薬剤師会</div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+  // セッション認証チェック
+  if (sessionStorage.getItem('mc_auth') !== '1') {
+    window.location.href = 'login.html';
+  }
+</script>
+</body>
+</html>
