@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RxSend - 処方箋事前送信システム</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="RxSend">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<meta name="theme-color" content="#1a6b5a">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
   :root {
@@ -396,6 +402,15 @@ function hideLoading() { document.getElementById('loading').classList.remove('sh
 function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
 function showError(msg) { const b=document.getElementById('errorBox'); b.textContent=msg; b.style.display='block'; }
 function hideError() { document.getElementById('errorBox').style.display='none'; }
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js")
+      .then(reg => console.log("SW登録完了:", reg.scope))
+      .catch(err => console.log("SW登録失敗:", err));
+  });
+}
 </script>
 </body>
 </html>
