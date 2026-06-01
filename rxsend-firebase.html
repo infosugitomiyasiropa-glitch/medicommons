@@ -6,138 +6,101 @@
 <title>RxSend - 処方箋事前送信システム</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
-
   :root {
-    --bg: #f0f4f8;
-    --surface: #ffffff;
-    --surface2: #f8fafc;
-    --primary: #1a6b5a;
-    --primary-light: #e8f5f2;
-    --primary-mid: #2d9b84;
-    --accent: #e8622a;
-    --text: #1a2332;
-    --text-sub: #5a6a7e;
-    --text-muted: #9aa6b4;
-    --border: #dde4ed;
-    --shadow: 0 2px 12px rgba(26,43,50,0.08);
-    --shadow-lg: 0 8px 32px rgba(26,43,50,0.12);
-    --radius: 12px;
+    --bg:#f0f4f8; --surface:#fff; --surface2:#f8fafc;
+    --primary:#1a6b5a; --primary-light:#e8f5f2; --primary-mid:#2d9b84;
+    --accent:#e8622a; --text:#1a2332; --text-sub:#5a6a7e; --text-muted:#9aa6b4;
+    --border:#dde4ed; --shadow:0 2px 12px rgba(26,43,50,0.08); --shadow-lg:0 8px 32px rgba(26,43,50,0.12);
+    --radius:12px;
   }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-  .header {
-    background: var(--primary); color: white; padding: 0 24px;
-    height: 60px; display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  }
-  .logo { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; }
-  .logo-icon { width: 32px; height: 32px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-  .mode-toggle { display: flex; background: rgba(255,255,255,0.15); border-radius: 8px; padding: 3px; gap: 2px; }
-  .mode-btn { padding: 6px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: inherit; font-weight: 500; transition: all 0.2s; color: rgba(255,255,255,0.7); background: transparent; }
-  .mode-btn.active { background: white; color: var(--primary); }
-
-  .main { max-width: 480px; margin: 0 auto; padding: 24px 16px; }
-  .screen { display: none; }
-  .screen.active { display: block; }
-
-  .page-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-  .page-subtitle { font-size: 14px; color: var(--text-sub); margin-bottom: 24px; line-height: 1.6; }
-
-  .card { background: var(--surface); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); }
-  .card-title { font-size: 13px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; }
-
-  .form-group { margin-bottom: 14px; }
-  .form-label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
-  .form-input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 15px; font-family: inherit; color: var(--text); background: var(--surface2); transition: border-color 0.2s; outline: none; }
-  .form-input:focus { border-color: var(--primary-mid); background: white; }
-
-  .upload-area { border: 2px dashed var(--border); border-radius: var(--radius); padding: 32px 20px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--surface2); position: relative; }
-  .upload-area:hover { border-color: var(--primary-mid); background: var(--primary-light); }
-  .upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-  .upload-icon { font-size: 36px; margin-bottom: 10px; display: block; }
-  .upload-text { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
-  .upload-hint { font-size: 12px; color: var(--text-muted); }
-
-  .preview-container { display: none; margin-top: 14px; border-radius: 8px; overflow: hidden; border: 2px solid var(--primary-mid); position: relative; }
-  .preview-container img { width: 100%; display: block; max-height: 200px; object-fit: cover; }
-  .preview-remove { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
-
-  .consent-box { background: var(--primary-light); border: 1px solid #b2ddd5; border-radius: 8px; padding: 14px; font-size: 13px; color: var(--primary); line-height: 1.7; }
-  .consent-check { display: flex; align-items: flex-start; gap: 10px; margin-top: 12px; cursor: pointer; }
-  .consent-check input { margin-top: 2px; accent-color: var(--primary); width: 16px; height: 16px; flex-shrink: 0; }
-  .consent-check span { font-size: 13px; font-weight: 500; }
-
-  .btn { width: 100%; padding: 14px; border: none; border-radius: var(--radius); font-size: 16px; font-family: inherit; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .btn-primary { background: var(--primary); color: white; }
-  .btn-primary:hover:not(:disabled) { background: var(--primary-mid); transform: translateY(-1px); box-shadow: var(--shadow-lg); }
-  .btn-primary:disabled { background: var(--text-muted); cursor: not-allowed; }
-  .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
-  .btn-outline:hover { background: var(--primary-light); }
-
-  .success-card { background: var(--surface); border-radius: var(--radius); padding: 32px 20px; text-align: center; box-shadow: var(--shadow); border: 2px solid #10b981; display: none; }
-  .success-icon { font-size: 48px; margin-bottom: 12px; animation: pop 0.4s ease; }
-  @keyframes pop { 0% { transform: scale(0); } 70% { transform: scale(1.2); } 100% { transform: scale(1); } }
-  .success-title { font-size: 20px; font-weight: 700; color: #065f46; margin-bottom: 8px; }
-  .success-text { font-size: 14px; color: var(--text-sub); line-height: 1.7; margin-bottom: 20px; }
-  .ticket-number { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 20px; display: inline-block; font-family: 'DM Mono', monospace; font-size: 24px; font-weight: 500; color: var(--primary); letter-spacing: 0.1em; margin-bottom: 20px; }
-
-  /* 薬局側 */
-  .pharmacy-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-  .badge-count { background: var(--accent); color: white; border-radius: 20px; padding: 4px 12px; font-size: 13px; font-weight: 700; }
-  .rx-list { display: flex; flex-direction: column; gap: 12px; }
-
-  .rx-card { background: var(--surface); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); border-left: 4px solid #f59e0b; transition: all 0.2s; }
-  .rx-card.preparing { border-left-color: #3b82f6; }
-  .rx-card.ready { border-left-color: #10b981; }
-  .rx-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-  .rx-name { font-size: 16px; font-weight: 700; }
-  .rx-time { font-size: 12px; color: var(--text-muted); font-family: 'DM Mono', monospace; }
-  .rx-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
-  .rx-ticket { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-sub); background: var(--surface2); padding: 2px 8px; border-radius: 4px; border: 1px solid var(--border); }
-  .status-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
-  .status-waiting { background: #fef3c7; color: #92400e; }
-  .status-preparing { background: #dbeafe; color: #1e40af; }
-  .status-ready { background: #d1fae5; color: #065f46; }
-
-  .rx-image-thumb { width: 100%; height: 100px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; overflow: hidden; background: var(--surface2); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 13px; }
-  .rx-image-thumb img { width: 100%; height: 100%; object-fit: cover; }
-
-  .action-row { display: flex; gap: 8px; }
-  .action-btn { flex: 1; padding: 8px; border: none; border-radius: 8px; font-size: 12px; font-family: inherit; font-weight: 700; cursor: pointer; transition: all 0.15s; }
-  .action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  .action-btn-preparing { background: #dbeafe; color: #1e40af; }
-  .action-btn-ready { background: #d1fae5; color: #065f46; }
-  .action-btn-preparing:hover:not(:disabled) { background: #bfdbfe; }
-  .action-btn-ready:hover:not(:disabled) { background: #a7f3d0; }
-
-  .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
-  .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
-
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--text); color: white; padding: 12px 24px; border-radius: 100px; font-size: 14px; font-weight: 500; box-shadow: var(--shadow-lg); z-index: 1000; transition: transform 0.3s ease; white-space: nowrap; }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-
-  .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.85); z-index: 500; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
-  .loading-overlay.show { display: flex; }
-  .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-text { font-size: 14px; color: var(--text-sub); font-weight: 500; }
-
-  .error-box { background: #fee2e2; border: 1px solid #fca5a5; border-radius: 8px; padding: 12px 14px; font-size: 13px; color: #991b1b; margin-bottom: 16px; display: none; }
-  .compress-info { font-size: 11px; color: var(--text-muted); margin-top: 6px; text-align: center; }
-
-  .refresh-btn { background: var(--primary-light); border: 1px solid #b2ddd5; color: var(--primary); border-radius: 8px; padding: 8px 16px; font-size: 13px; font-family: inherit; font-weight: 500; cursor: pointer; }
-  .refresh-btn:hover { background: #d1ede8; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  .header{background:var(--primary);color:white;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.15);}
+  .logo{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;}
+  .logo-icon{width:32px;height:32px;background:white;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .mode-toggle{display:flex;background:rgba(255,255,255,0.15);border-radius:8px;padding:3px;gap:2px;}
+  .mode-btn{padding:6px 16px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-family:inherit;font-weight:500;transition:all 0.2s;color:rgba(255,255,255,0.7);background:transparent;}
+  .mode-btn.active{background:white;color:var(--primary);}
+  .main{max-width:480px;margin:0 auto;padding:24px 16px;}
+  .screen{display:none;} .screen.active{display:block;}
+  .page-title{font-size:22px;font-weight:700;margin-bottom:4px;}
+  .page-subtitle{font-size:14px;color:var(--text-sub);margin-bottom:24px;line-height:1.6;}
+  .card{background:var(--surface);border-radius:var(--radius);padding:20px;margin-bottom:16px;box-shadow:var(--shadow);border:1px solid var(--border);}
+  .card-title{font-size:13px;font-weight:700;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px;}
+  .form-group{margin-bottom:14px;}
+  .form-label{display:block;font-size:13px;font-weight:500;margin-bottom:6px;}
+  .form-input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;font-family:inherit;color:var(--text);background:var(--surface2);transition:border-color 0.2s;outline:none;}
+  .form-input:focus{border-color:var(--primary-mid);background:white;}
+  .upload-area{border:2px dashed var(--border);border-radius:var(--radius);padding:32px 20px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--surface2);position:relative;}
+  .upload-area:hover{border-color:var(--primary-mid);background:var(--primary-light);}
+  .upload-area input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+  .upload-icon{font-size:36px;margin-bottom:10px;display:block;}
+  .upload-text{font-size:15px;font-weight:500;margin-bottom:4px;}
+  .upload-hint{font-size:12px;color:var(--text-muted);}
+  .preview-container{display:none;margin-top:14px;border-radius:8px;overflow:hidden;border:2px solid var(--primary-mid);position:relative;}
+  .preview-container img{width:100%;display:block;max-height:200px;object-fit:cover;}
+  .preview-remove{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.6);color:white;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+  .consent-box{background:var(--primary-light);border:1px solid #b2ddd5;border-radius:8px;padding:14px;font-size:13px;color:var(--primary);line-height:1.7;}
+  .consent-check{display:flex;align-items:flex-start;gap:10px;margin-top:12px;cursor:pointer;}
+  .consent-check input{margin-top:2px;accent-color:var(--primary);width:16px;height:16px;flex-shrink:0;}
+  .consent-check span{font-size:13px;font-weight:500;}
+  .btn{width:100%;padding:14px;border:none;border-radius:var(--radius);font-size:16px;font-family:inherit;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .btn-primary{background:var(--primary);color:white;}
+  .btn-primary:hover:not(:disabled){background:var(--primary-mid);transform:translateY(-1px);box-shadow:var(--shadow-lg);}
+  .btn-primary:disabled{background:var(--text-muted);cursor:not-allowed;}
+  .btn-outline{background:transparent;color:var(--primary);border:2px solid var(--primary);}
+  .btn-outline:hover{background:var(--primary-light);}
+  .success-card{background:var(--surface);border-radius:var(--radius);padding:32px 20px;text-align:center;box-shadow:var(--shadow);border:2px solid #10b981;display:none;}
+  .success-icon{font-size:48px;margin-bottom:12px;animation:pop 0.4s ease;}
+  @keyframes pop{0%{transform:scale(0);}70%{transform:scale(1.2);}100%{transform:scale(1);}}
+  .success-title{font-size:20px;font-weight:700;color:#065f46;margin-bottom:8px;}
+  .success-text{font-size:14px;color:var(--text-sub);line-height:1.7;margin-bottom:20px;}
+  .ticket-number{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 20px;display:inline-block;font-family:'DM Mono',monospace;font-size:24px;font-weight:500;color:var(--primary);letter-spacing:0.1em;margin-bottom:20px;}
+  .pharmacy-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+  .badge-count{background:var(--accent);color:white;border-radius:20px;padding:4px 12px;font-size:13px;font-weight:700;}
+  .rx-list{display:flex;flex-direction:column;gap:12px;}
+  .rx-card{background:var(--surface);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border:1px solid var(--border);border-left:4px solid #f59e0b;transition:all 0.2s;animation:slideIn 0.3s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+  .rx-card.preparing{border-left-color:#3b82f6;}
+  .rx-card.ready{border-left-color:#10b981;}
+  .rx-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .rx-name{font-size:16px;font-weight:700;}
+  .rx-time{font-size:12px;color:var(--text-muted);font-family:'DM Mono',monospace;}
+  .rx-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
+  .rx-ticket{font-family:'DM Mono',monospace;font-size:12px;color:var(--text-sub);background:var(--surface2);padding:2px 8px;border-radius:4px;border:1px solid var(--border);}
+  .status-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
+  .status-waiting{background:#fef3c7;color:#92400e;}
+  .status-preparing{background:#dbeafe;color:#1e40af;}
+  .status-ready{background:#d1fae5;color:#065f46;}
+  .rx-image-thumb{width:100%;height:100px;border-radius:8px;border:1px solid var(--border);margin-bottom:10px;overflow:hidden;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:13px;}
+  .rx-image-thumb img{width:100%;height:100%;object-fit:cover;}
+  .action-row{display:flex;gap:8px;}
+  .action-btn{flex:1;padding:8px;border:none;border-radius:8px;font-size:12px;font-family:inherit;font-weight:700;cursor:pointer;transition:all 0.15s;}
+  .action-btn:disabled{opacity:0.4;cursor:not-allowed;}
+  .action-btn-preparing{background:#dbeafe;color:#1e40af;}
+  .action-btn-ready{background:#d1fae5;color:#065f46;}
+  .action-btn-preparing:hover:not(:disabled){background:#bfdbfe;}
+  .action-btn-ready:hover:not(:disabled){background:#a7f3d0;}
+  .empty-state{text-align:center;padding:48px 20px;color:var(--text-muted);}
+  .empty-state-icon{font-size:48px;margin-bottom:12px;}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--text);color:white;padding:12px 24px;border-radius:100px;font-size:14px;font-weight:500;box-shadow:var(--shadow-lg);z-index:1000;transition:transform 0.3s ease;white-space:nowrap;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  .loading-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,0.85);z-index:500;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+  .loading-overlay.show{display:flex;}
+  .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading-text{font-size:14px;color:var(--text-sub);font-weight:500;}
+  .error-box{background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:12px 14px;font-size:13px;color:#991b1b;margin-bottom:16px;display:none;}
+  .compress-info{font-size:11px;color:var(--text-muted);margin-top:6px;text-align:center;}
+  .live-badge{display:flex;align-items:center;gap:6px;font-size:12px;color:#065f46;font-weight:500;}
+  .live-dot{width:8px;height:8px;background:#10b981;border-radius:50%;animation:pulse 1.5s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
 </style>
 </head>
 <body>
 
 <header class="header">
-  <div class="logo">
-    <div class="logo-icon">💊</div>
-    RxSend
-  </div>
+  <div class="logo"><div class="logo-icon">💊</div>RxSend</div>
   <div class="mode-toggle">
     <button class="mode-btn active" onclick="switchMode('patient')">患者</button>
     <button class="mode-btn" onclick="switchMode('pharmacy')">薬局</button>
@@ -146,9 +109,8 @@
 
 <div class="loading-overlay" id="loading">
   <div class="spinner"></div>
-  <div class="loading-text" id="loadingText">送信中...</div>
+  <div class="loading-text" id="loadingText">処理中...</div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <div class="main">
@@ -158,9 +120,7 @@
     <div id="patientForm">
       <div class="page-title">処方箋を送る</div>
       <p class="page-subtitle">来局前に処方箋を送ると、準備ができてからお知らせします。</p>
-
       <div class="error-box" id="errorBox"></div>
-
       <div class="card">
         <div class="card-title">👤 患者情報</div>
         <div class="form-group">
@@ -176,7 +136,6 @@
           <input class="form-input" type="text" id="patientNote" placeholder="ジェネリック希望、など" />
         </div>
       </div>
-
       <div class="card">
         <div class="card-title">📄 処方箋の写真</div>
         <div class="upload-area" id="uploadArea">
@@ -191,29 +150,22 @@
         </div>
         <div class="compress-info" id="compressInfo"></div>
       </div>
-
       <div class="card">
         <div class="card-title">🔒 個人情報の取り扱い</div>
-        <div class="consent-box">
-          送信された処方箋画像・個人情報は、<strong>たかのだい薬局</strong>が調剤目的のみに使用します。調剤完了後、画像データは速やかに削除します。
-        </div>
+        <div class="consent-box">送信された処方箋画像・個人情報は、<strong>たかのだい薬局</strong>が調剤目的のみに使用します。調剤完了後、画像データは速やかに削除します。</div>
         <label class="consent-check">
           <input type="checkbox" id="consentCheck" onchange="updateSubmitBtn()" />
           <span>上記に同意して送信します</span>
         </label>
       </div>
-
-      <button class="btn btn-primary" id="submitBtn" disabled onclick="submitRx()">
-        📤 処方箋を送信する
-      </button>
+      <button class="btn btn-primary" id="submitBtn" disabled onclick="submitRx()">📤 処方箋を送信する</button>
     </div>
-
     <div class="success-card" id="successCard">
       <div class="success-icon">✅</div>
       <div class="success-title">送信完了しました</div>
       <div class="success-text">準備ができましたらお電話でお知らせします。<br>来局の際は受付番号をお伝えください。</div>
       <div class="ticket-number" id="ticketDisplay">—</div>
-      <div class="success-text" style="font-size:12px; margin-bottom:0;">※ 原本の処方箋は来局時にご持参ください</div>
+      <div class="success-text" style="font-size:12px;margin-bottom:0;">※ 原本の処方箋は来局時にご持参ください</div>
       <button class="btn btn-outline" style="margin-top:20px" onclick="resetPatient()">別の処方箋を送る</button>
     </div>
   </div>
@@ -223,14 +175,13 @@
     <div class="pharmacy-header">
       <div>
         <div class="page-title">受付管理</div>
-        <div style="font-size:13px; color:var(--text-sub)">たかのだい薬局</div>
+        <div style="font-size:13px;color:var(--text-sub)">たかのだい薬局</div>
       </div>
-      <div style="display:flex; gap:8px; align-items:center;">
-        <button class="refresh-btn" onclick="loadRxList()">🔄 更新</button>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
         <div class="badge-count" id="waitingCount">0件</div>
+        <div class="live-badge"><div class="live-dot"></div>リアルタイム更新中</div>
       </div>
     </div>
-
     <div class="rx-list" id="rxList"></div>
     <div class="empty-state" id="emptyState" style="display:none">
       <div class="empty-state-icon">🎉</div>
@@ -240,10 +191,9 @@
 
 </div>
 
-<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, doc, updateDoc, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDFpoTYIM3mcAKAcoDdmdfvhYSyRQHjoJA",
@@ -251,87 +201,87 @@ const firebaseConfig = {
   projectId: "medi-rx-app",
   storageBucket: "medi-rx-app.firebasestorage.app",
   messagingSenderId: "363255272852",
-  appId: "1:363255272852:web:1dbe8473d92163c8d7ab81",
-  measurementId: "G-5EKV8W644N"
+  appId: "1:363255272852:web:1dbe8473d92163c8d7ab81"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ===== グローバルに公開 =====
-window._db = db;
-window._fbModules = { collection, addDoc, getDocs, doc, updateDoc, query, orderBy, where };
-
 // ===== 画像圧縮 =====
-window.compressImage = function(file, maxWidth = 800, quality = 0.6) {
-  return new Promise((resolve) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      const ratio = Math.min(maxWidth / img.width, 1);
-      canvas.width = img.width * ratio;
-      canvas.height = img.height * ratio;
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      const base64 = canvas.toDataURL('image/jpeg', quality);
-      URL.revokeObjectURL(url);
-      resolve(base64);
-    };
-    img.src = url;
-  });
-};
+window.compressImage = (file, maxWidth=800, quality=0.6) => new Promise(resolve => {
+  const canvas = document.createElement('canvas');
+  const img = new Image();
+  const url = URL.createObjectURL(file);
+  img.onload = () => {
+    const ratio = Math.min(maxWidth / img.width, 1);
+    canvas.width = img.width * ratio;
+    canvas.height = img.height * ratio;
+    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+    URL.revokeObjectURL(url);
+    resolve(canvas.toDataURL('image/jpeg', quality));
+  };
+  img.src = url;
+});
 
-// ===== 処方箋送信 =====
-window.submitToFirestore = async function(data) {
-  const { collection, addDoc } = window._fbModules;
-  const ref = await addDoc(collection(window._db, 'prescriptions'), data);
+// ===== 送信 =====
+window.submitToFirestore = async (data) => {
+  const ref = await addDoc(collection(db, 'prescriptions'), data);
   return ref.id;
 };
 
-// ===== 一覧取得 =====
-window.loadFromFirestore = async function() {
-  const { collection, getDocs, query, orderBy, where } = window._fbModules;
-  const q = query(
-    collection(window._db, 'prescriptions'),
-    where('status', '!=', 'done'),
-    orderBy('status'),
-    orderBy('createdAt', 'desc')
-  );
-  const snap = await getDocs(q);
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+// ===== ステータス更新 =====
+window.updateStatusInFirestore = async (docId, newStatus) => {
+  await updateDoc(doc(db, 'prescriptions', docId), { status: newStatus });
 };
 
-// ===== ステータス更新 =====
-window.updateStatusInFirestore = async function(docId, newStatus) {
-  const { doc, updateDoc } = window._fbModules;
-  await updateDoc(doc(window._db, 'prescriptions', docId), { status: newStatus });
+// ===== リアルタイム購読 =====
+let unsubscribe = null;
+
+window.startRealtimeListener = () => {
+  if (unsubscribe) unsubscribe();
+  // インデックス不要のシンプルなクエリ
+  const q = query(
+    collection(db, 'prescriptions'),
+    orderBy('createdAt', 'desc')
+  );
+  unsubscribe = onSnapshot(q, (snap) => {
+    const all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const active = all.filter(r => r.status !== 'done');
+    window.renderPharmacy(active);
+  }, (err) => {
+    console.error('リスナーエラー:', err);
+    showToast('リアルタイム更新エラー: ' + err.message);
+  });
+};
+
+window.stopRealtimeListener = () => {
+  if (unsubscribe) { unsubscribe(); unsubscribe = null; }
 };
 
 console.log('Firebase初期化完了');
 </script>
 
 <script>
-// ===== STATE =====
 let currentFile = null;
 let compressedBase64 = null;
 
-// ===== MODE =====
 function switchMode(mode) {
-  document.querySelectorAll('.mode-btn').forEach((b, i) => {
-    b.classList.toggle('active', (i===0 && mode==='patient') || (i===1 && mode==='pharmacy'));
+  document.querySelectorAll('.mode-btn').forEach((b,i) => {
+    b.classList.toggle('active', (i===0&&mode==='patient')||(i===1&&mode==='pharmacy'));
   });
   document.getElementById('patientScreen').classList.toggle('active', mode==='patient');
   document.getElementById('pharmacyScreen').classList.toggle('active', mode==='pharmacy');
-  if (mode === 'pharmacy') loadRxList();
+  if (mode === 'pharmacy') {
+    window.startRealtimeListener && window.startRealtimeListener();
+  } else {
+    window.stopRealtimeListener && window.stopRealtimeListener();
+  }
 }
 
-// ===== FILE =====
 async function handleFile(e) {
   const file = e.target.files[0];
   if (!file) return;
   currentFile = file;
-
   showLoading('画像を圧縮中...');
   try {
     compressedBase64 = await window.compressImage(file);
@@ -339,18 +289,15 @@ async function handleFile(e) {
     document.getElementById('previewImg').src = compressedBase64;
     document.getElementById('previewContainer').style.display = 'block';
     document.getElementById('uploadArea').style.display = 'none';
-    document.getElementById('compressInfo').textContent = `圧縮後サイズ: 約${sizeKB}KB`;
+    document.getElementById('compressInfo').textContent = `圧縮後: 約${sizeKB}KB`;
   } catch(err) {
-    showError('画像の処理に失敗しました。別の画像をお試しください。');
-  } finally {
-    hideLoading();
-  }
+    showError('画像の処理に失敗しました。');
+  } finally { hideLoading(); }
   updateSubmitBtn();
 }
 
 function removeFile() {
-  currentFile = null;
-  compressedBase64 = null;
+  currentFile = null; compressedBase64 = null;
   document.getElementById('fileInput').value = '';
   document.getElementById('previewContainer').style.display = 'none';
   document.getElementById('uploadArea').style.display = 'block';
@@ -358,7 +305,6 @@ function removeFile() {
   updateSubmitBtn();
 }
 
-// ===== VALIDATION =====
 function updateSubmitBtn() {
   const name = document.getElementById('patientName').value.trim();
   const phone = document.getElementById('patientPhone').value.trim();
@@ -369,20 +315,13 @@ function updateSubmitBtn() {
 document.getElementById('patientName').addEventListener('input', updateSubmitBtn);
 document.getElementById('patientPhone').addEventListener('input', updateSubmitBtn);
 
-// ===== SUBMIT =====
 async function submitRx() {
   const sizeKB = Math.round(compressedBase64.length * 0.75 / 1024);
-  if (sizeKB > 900) {
-    showError('画像サイズが大きすぎます（上限900KB）。もう一度撮影してください。');
-    return;
-  }
-
-  showLoading('送信中...');
-  hideError();
-
+  if (sizeKB > 900) { showError('画像サイズが大きすぎます。もう一度撮影してください。'); return; }
+  showLoading('送信中...'); hideError();
   try {
     const ticket = 'RX-' + String(Math.floor(Math.random() * 9000) + 1000);
-    const data = {
+    await window.submitToFirestore({
       ticket,
       name: document.getElementById('patientName').value.trim(),
       phone: document.getElementById('patientPhone').value.trim(),
@@ -390,21 +329,15 @@ async function submitRx() {
       imageBase64: compressedBase64,
       status: 'waiting',
       createdAt: new Date().toISOString(),
-      timeLabel: new Date().toLocaleTimeString('ja-JP', {hour:'2-digit', minute:'2-digit'})
-    };
-
-    await window.submitToFirestore(data);
-
+      timeLabel: new Date().toLocaleTimeString('ja-JP', {hour:'2-digit',minute:'2-digit'})
+    });
     document.getElementById('ticketDisplay').textContent = ticket;
     document.getElementById('patientForm').style.display = 'none';
     document.getElementById('successCard').style.display = 'block';
     document.getElementById('successCard').scrollIntoView({behavior:'smooth'});
   } catch(err) {
-    console.error(err);
-    showError('送信に失敗しました。通信状況を確認してください。\n' + err.message);
-  } finally {
-    hideLoading();
-  }
+    showError('送信に失敗しました: ' + err.message);
+  } finally { hideLoading(); }
 }
 
 function resetPatient() {
@@ -414,102 +347,55 @@ function resetPatient() {
   document.getElementById('patientPhone').value = '';
   document.getElementById('patientNote').value = '';
   document.getElementById('consentCheck').checked = false;
-  removeFile();
-  updateSubmitBtn();
-  window.scrollTo({top:0, behavior:'smooth'});
+  removeFile(); updateSubmitBtn();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ===== PHARMACY =====
-async function loadRxList() {
-  showLoading('受付一覧を読み込み中...');
-  try {
-    const list = await window.loadFromFirestore();
-    renderPharmacy(list);
-  } catch(err) {
-    console.error(err);
-    showToast('読み込みに失敗しました: ' + err.message);
-  } finally {
-    hideLoading();
-  }
-}
-
-function renderPharmacy(list) {
+window.renderPharmacy = function(list) {
   const rxListEl = document.getElementById('rxList');
   const emptyEl = document.getElementById('emptyState');
   const countEl = document.getElementById('waitingCount');
-
   countEl.textContent = `受付中 ${list.length}件`;
-
-  if (list.length === 0) {
-    rxListEl.innerHTML = '';
-    emptyEl.style.display = 'block';
-    return;
-  }
+  if (list.length === 0) { rxListEl.innerHTML = ''; emptyEl.style.display = 'block'; return; }
   emptyEl.style.display = 'none';
-
-  const statusLabel = { waiting:'受付済み', preparing:'調剤中', ready:'準備完了' };
-
+  const statusLabel = {waiting:'受付済み', preparing:'調剤中', ready:'準備完了'};
   rxListEl.innerHTML = list.map(rx => `
-    <div class="rx-card ${rx.status}" id="card-${rx.id}">
+    <div class="rx-card ${rx.status}">
       <div class="rx-card-header">
         <div class="rx-name">${rx.name}</div>
-        <div class="rx-time">${rx.timeLabel || ''}</div>
+        <div class="rx-time">${rx.timeLabel||''}</div>
       </div>
       <div class="rx-meta">
         <span class="rx-ticket">${rx.ticket}</span>
-        <span class="status-badge status-${rx.status}">${statusLabel[rx.status] || rx.status}</span>
-        ${rx.note ? `<span style="font-size:12px;color:var(--text-sub)">📝 ${rx.note}</span>` : ''}
+        <span class="status-badge status-${rx.status}">${statusLabel[rx.status]||rx.status}</span>
+        ${rx.note?`<span style="font-size:12px;color:var(--text-sub)">📝 ${rx.note}</span>`:''}
       </div>
       <div class="rx-image-thumb">
-        ${rx.imageBase64 ? `<img src="${rx.imageBase64}" alt="処方箋" />` : '画像なし'}
+        ${rx.imageBase64?`<img src="${rx.imageBase64}" alt="処方箋" />`:'画像なし'}
       </div>
-      <div style="font-size:12px; color:var(--text-sub); margin-bottom:10px">📞 ${rx.phone}</div>
+      <div style="font-size:12px;color:var(--text-sub);margin-bottom:10px">📞 ${rx.phone}</div>
       <div class="action-row">
-        <button class="action-btn action-btn-preparing"
-          onclick="changeStatus('${rx.id}','${rx.name}','preparing')"
-          ${rx.status !== 'waiting' ? 'disabled' : ''}>🔬 調剤開始</button>
-        <button class="action-btn action-btn-ready"
-          onclick="changeStatus('${rx.id}','${rx.name}','ready')"
-          ${rx.status === 'ready' ? 'disabled' : ''}>✅ 準備完了</button>
-        <button class="action-btn"
-          style="background:#fee2e2;color:#991b1b;flex:0.7"
-          onclick="changeStatus('${rx.id}','${rx.name}','done')">🏁 完了</button>
+        <button class="action-btn action-btn-preparing" onclick="changeStatus('${rx.id}','${rx.name}','preparing')" ${rx.status!=='waiting'?'disabled':''}>🔬 調剤開始</button>
+        <button class="action-btn action-btn-ready" onclick="changeStatus('${rx.id}','${rx.name}','ready')" ${rx.status==='ready'?'disabled':''}>✅ 準備完了</button>
+        <button class="action-btn" style="background:#fee2e2;color:#991b1b;flex:0.7" onclick="changeStatus('${rx.id}','${rx.name}','done')">🏁 完了</button>
       </div>
     </div>
   `).join('');
-}
+};
 
-async function changeStatus(docId, name, newStatus) {
+window.changeStatus = async (docId, name, newStatus) => {
   try {
     await window.updateStatusInFirestore(docId, newStatus);
-    const msg = { preparing:`${name} さんの調剤を開始`, ready:`${name} さんの準備完了`, done:`${name} さんの受付完了` };
-    showToast(msg[newStatus] || '更新しました');
-    await loadRxList();
-  } catch(err) {
-    showToast('更新失敗: ' + err.message);
-  }
-}
+    const msg = {preparing:`${name} さんの調剤を開始`,ready:`${name} さんの準備完了`,done:`${name} さんの受付完了`};
+    showToast(msg[newStatus]||'更新しました');
+  } catch(err) { showToast('更新失敗: ' + err.message); }
+};
 
-// ===== UI HELPERS =====
-function showLoading(msg) {
-  document.getElementById('loadingText').textContent = msg || '処理中...';
-  document.getElementById('loading').classList.add('show');
-}
+function showLoading(msg) { document.getElementById('loadingText').textContent = msg||'処理中...'; document.getElementById('loading').classList.add('show'); }
 function hideLoading() { document.getElementById('loading').classList.remove('show'); }
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-function showError(msg) {
-  const b = document.getElementById('errorBox');
-  b.textContent = msg;
-  b.style.display = 'block';
-}
-function hideError() { document.getElementById('errorBox').style.display = 'none'; }
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+function showError(msg) { const b=document.getElementById('errorBox'); b.textContent=msg; b.style.display='block'; }
+function hideError() { document.getElementById('errorBox').style.display='none'; }
 </script>
 </body>
 </html>
