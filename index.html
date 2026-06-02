@@ -184,101 +184,6 @@
   .dl-btn:hover { opacity: 0.8; }
   .dl-btn::before { content: '↓'; font-size: 13px; }
 
-  /* ── NAV ── */
-  .site-nav {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(244,247,242,0.93);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 20px;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 52px;
-    margin: -32px -16px 28px;   /* bodyのpadding分を打ち消して全幅に */
-  }
-  .nav-logo {
-    font-family: 'DM Serif Display', serif;
-    font-size: 18px; font-weight: 400;
-    text-decoration: none; color: var(--text);
-  }
-  .nav-logo span { color: var(--green); }
-  .nav-member-btn {
-    font-size: 11px; font-family: 'Space Mono', monospace;
-    font-weight: 700; letter-spacing: 0.5px;
-    padding: 7px 16px; border-radius: 20px;
-    background: var(--green); color: #fff;
-    text-decoration: none;
-    transition: opacity 0.2s;
-  }
-  .nav-member-btn:hover { opacity: 0.85; }
-
-  /* ── MEMBER CTA ── */
-  .member-cta {
-    background: linear-gradient(135deg, #2f6b3c 0%, var(--green) 60%, var(--teal) 100%);
-    border-radius: 16px; padding: 28px;
-    margin-bottom: 22px;
-    color: #fff;
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 16px;
-  }
-  .member-cta-text { flex: 1 1 240px; }
-  .member-cta-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px; letter-spacing: 2px;
-    color: rgba(255,255,255,0.65); margin-bottom: 6px;
-  }
-  .member-cta-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 20px; font-weight: 400; margin-bottom: 6px;
-  }
-  .member-cta-desc {
-    font-size: 12px; color: rgba(255,255,255,0.75); line-height: 1.7;
-  }
-  .member-cta-btn {
-    padding: 12px 28px; border-radius: 8px;
-    background: #fff; color: #2f6b3c;
-    font-size: 13px; font-weight: 700;
-    text-decoration: none; white-space: nowrap;
-    transition: opacity 0.2s;
-    flex-shrink: 0;
-  }
-  .member-cta-btn:hover { opacity: 0.9; }
-
-  /* ── SITE FOOTER ── */
-  .site-footer {
-    margin-top: 8px;
-    border-top: 1px solid var(--border);
-    padding-top: 28px;
-  }
-  .footer-grid {
-    display: flex; flex-wrap: wrap; gap: 24px;
-    justify-content: space-between; align-items: flex-start;
-    margin-bottom: 20px;
-  }
-  .footer-brand { flex: 1 1 200px; }
-  .footer-brand-logo {
-    font-family: 'DM Serif Display', serif;
-    font-size: 20px; font-weight: 400; margin-bottom: 4px;
-  }
-  .footer-brand-logo span { color: var(--green); }
-  .footer-brand-sub {
-    font-size: 11px; color: var(--muted);
-    font-family: 'Space Mono', monospace; letter-spacing: 1px;
-  }
-  .footer-info { flex: 1 1 200px; font-size: 12px; line-height: 2; color: var(--muted); }
-  .footer-info strong { color: var(--text); font-size: 11px; }
-  .footer-links-col { flex: 1 1 140px; }
-  .footer-links-col a {
-    display: block; font-size: 12px; color: var(--muted);
-    text-decoration: none; line-height: 2.2;
-    transition: color 0.2s;
-  }
-  .footer-links-col a:hover { color: var(--green); }
-  .footer-copy {
-    text-align: center; font-size: 11px; color: var(--border);
-    font-family: 'Space Mono', monospace; letter-spacing: 1px;
-    padding-bottom: 8px;
-  }
-
   /* staggered fade-up */
   .fade1 { animation: fadeUp 0.7s 0.1s both; }
   .fade2 { animation: fadeUp 0.7s 0.15s both; }
@@ -289,11 +194,6 @@
 </style>
 </head>
 <body>
-<nav class="site-nav">
-  <a class="nav-logo" href="index.html">Medi<span>Commons</span></a>
-  <a class="nav-member-btn" href="members/login.html">会員ページ →</a>
-</nav>
-
 <div class="wrap">
 
   <!-- HEADER -->
@@ -428,7 +328,7 @@
         <div class="step-title">参加申請 → 直接連絡</div>
         <div class="step-desc">まず入会届を提出して参加。在庫が必要になったら、参加薬局へ直接問い合わせて下さい。</div>
         <a class="dl-btn" style="color:#3A7D44"
-           href="./MediCommons%E5%85%A5%E4%BC%9A%E5%B1%8A.pdf"
+           href="https://github.com/infosugitomiyasiropa-glitch/medicommons/blob/main/entry-form.pdf"
            download="MediCommons入会届.pdf">入会届</a>
       </div>
       <div class="step-card" data-color="#2A8F7F" onclick="selectStep(this)">
@@ -437,7 +337,7 @@
         <div class="step-title">双方で確認後、譲渡依頼書を発行・送付して下さい</div>
         <div class="step-desc">提供できるかを2薬局間で確認し、融通可否が決まったら、譲渡依頼書を作成して送付する(FAX・メール等)。</div>
         <a class="dl-btn" style="color:#2A8F7F"
-           href="./%E5%8C%BB%E8%96%AC%E5%93%81%E8%AD%B2%E6%B8%A1%E4%BE%9D%E9%A0%BC%E6%9B%B8_%E6%A7%98%E5%BC%8F.pdf"
+           href="https://github.com/infosugitomiyasiropa-glitch/medicommons/blob/main/transfer-form.pdf"
            download="医薬品譲渡依頼書_様式.pdf">譲渡依頼書</a>
       </div>
       <div class="step-card" data-color="#C47D1A" onclick="selectStep(this)">
@@ -446,7 +346,7 @@
         <div class="step-title">規約に基づき実施</div>
         <div class="step-desc">MediCommonsの規程に沿って譲渡・受領を完了する。</div>
         <a class="dl-btn" style="color:#C47D1A"
-           href="./%E6%9D%89%E6%88%B8%E5%AE%AE%E4%BB%A3%E8%96%AC%E5%89%A4%E5%B8%AB%E4%BC%9A%20MediCommons%E8%A6%8F%E7%B4%84.pdf"
+           href="https://github.com/infosugitomiyasiropa-glitch/medicommons/blob/main/rules.pdf"
            download="杉戸宮代薬剤師会 MediCommons規約.pdf">規約を確認</a>
       </div>
     </div>
@@ -479,38 +379,16 @@
     </div>
   </div>
 
-  <!-- MEMBER CTA -->
-  <div class="member-cta fade6">
-    <div class="member-cta-text">
-      <div class="member-cta-label">MEMBERS ONLY</div>
-      <div class="member-cta-title">在庫情報・会員向けページ</div>
-      <div class="member-cta-desc">参加薬局の在庫情報や会員向けお知らせはこちらから。</div>
-    </div>
-    <a class="member-cta-btn" href="members/login.html">会員ページへ →</a>
-  </div>
+  <!-- FOOTER -->
+  <div class="footer fade6">
+    <div class="footer-inner">
+      <img src="IMG_4080.jpeg" alt="メディコ">
+      <span>メディコ</span>
+      <span class="footer-sep">|</span>
 
-  <!-- SITE FOOTER -->
-  <div class="site-footer fade6">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="footer-brand-logo">
-          <img src="IMG_4080.png" alt="メディコ" style="width:32px;height:32px;object-fit:contain;vertical-align:middle;margin-right:8px;">Medi<span>Commons</span>
-        </div>
-        <div class="footer-brand-sub">薬局間相互融通の枠組み</div>
-      </div>
-      <div class="footer-info">
-        <strong>杉戸町商工会内　杉戸・宮代薬剤師会事務局</strong><br>
-        〒345-0036<br>
-        埼玉県北葛飾郡杉戸町杉戸3-9-10<br>
-        ココティすぎと複合施設2階<br>
-        TEL：0480-32-3719　FAX：0480-32-3919
-      </div>
-      <div class="footer-links-col">
-        <a href="https://r.goope.jp/sugimiya-pa/" target="_blank" rel="noopener">薬剤師会HP（グーぺ）</a>
-        <a href="members/login.html">会員ページ</a>
-      </div>
+      
+      <span>杉戸・宮代薬剤師会</span>
     </div>
-    <div class="footer-copy">© 杉戸・宮代薬剤師会</div>
   </div>
 
 </div><!-- /wrap -->
