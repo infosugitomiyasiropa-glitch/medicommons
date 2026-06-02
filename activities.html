@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>活動紹介｜杉戸・宮代薬剤師会</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #F4F7F2;
+    --surface:   #FFFFFF;
+    --green:     #3A7D44;
+    --green-dark:#2f6b3c;
+    --teal:      #2A8F7F;
+    --amber:     #C47D1A;
+    --red:       #B94040;
+    --border:    #D8E2D5;
+    --text:      #1C2A1E;
+    --muted:     #7A8A82;
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(20px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity:0; } to { opacity:1; }
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.8;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(244,247,242,0.93);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 52px;
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px; font-weight: 400;
+    text-decoration: none; color: var(--text);
+  }
+  .nav-logo span { color: var(--green); }
+  .nav-activities {
+    font-size: 12px; font-family: 'Space Mono', monospace;
+    letter-spacing: 1px; text-decoration: none;
+    color: var(--green); border-bottom: 1px solid var(--green);
+    padding-bottom: 1px;
+  }
+  .nav-member-btn {
+    font-size: 11px; font-family: 'Space Mono', monospace;
+    font-weight: 700; letter-spacing: 0.5px;
+    padding: 7px 16px; border-radius: 20px;
+    background: var(--green); color: #fff;
+    text-decoration: none; transition: opacity 0.2s;
+  }
+  .nav-member-btn:hover { opacity: 0.85; }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 64px 24px 48px;
+    text-align: center;
+    animation: fadeUp 0.7s both;
+  }
+  .hero-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; letter-spacing: 3px; color: var(--green);
+    margin-bottom: 16px;
+  }
+  .hero-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 400; margin-bottom: 16px; line-height: 1.2;
+  }
+  .hero-desc {
+    font-size: 14px; color: var(--muted);
+    max-width: 520px; margin: 0 auto;
+    line-height: 1.9;
+  }
+
+  /* ── LAYOUT ── */
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px 80px; }
+
+  /* ── ACTIVITY CARD ── */
+  .activity {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s both;
+    transition: box-shadow 0.3s;
+  }
+  .activity:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.07); }
+
+  .activity-header {
+    height: 6px;
+  }
+  .activity-body {
+    padding: 32px;
+  }
+  .activity-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; letter-spacing: 2px;
+    padding: 3px 10px; border-radius: 3px;
+    display: inline-block; margin-bottom: 14px;
+    font-weight: 700;
+  }
+  .activity-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px; font-weight: 400;
+    margin-bottom: 12px; line-height: 1.3;
+  }
+  .activity-desc {
+    font-size: 14px; color: var(--muted);
+    line-height: 1.9; margin-bottom: 20px;
+    max-width: 600px;
+  }
+  .activity-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px; font-weight: 700;
+    text-decoration: none; padding: 10px 20px;
+    border-radius: 8px; transition: all 0.2s;
+  }
+  .activity-link:hover { gap: 10px; }
+
+  /* ── AUDIENCE BADGE ── */
+  .audience {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .audience-badge {
+    font-size: 11px; padding: 3px 10px;
+    border-radius: 20px; border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding-top: 28px; margin-top: 8px;
+  }
+  .footer-grid {
+    display: flex; flex-wrap: wrap; gap: 24px;
+    justify-content: space-between; align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  .footer-brand-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px; font-weight: 400; margin-bottom: 4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .footer-brand-logo span { color: var(--green); }
+  .footer-brand-logo img { width:32px; height:32px; object-fit:contain; }
+  .footer-brand-sub { font-size:11px; color:var(--muted); font-family:'Space Mono',monospace; letter-spacing:1px; }
+  .footer-info { flex:1 1 200px; font-size:12px; line-height:2; color:var(--muted); }
+  .footer-info strong { color:var(--text); font-size:11px; }
+  .footer-links-col a { display:block; font-size:12px; color:var(--muted); text-decoration:none; line-height:2.2; transition:color 0.2s; }
+  .footer-links-col a:hover { color:var(--green); }
+  .footer-copy { text-align:center; font-size:11px; color:var(--border); font-family:'Space Mono',monospace; letter-spacing:1px; padding-bottom:8px; }
+
+  @media (max-width: 600px) {
+    .activity-body { padding: 22px 18px; }
+    nav { gap: 8px; }
+    .nav-activities { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">Medi<span>Commons</span></a>
+  <a class="nav-activities" href="activities.html">活動紹介</a>
+  <a class="nav-member-btn" href="members/login.html">会員ページ →</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">SUGITO-MIYASHIRO PHARMACISTS ASSOC.</div>
+  <h1 class="hero-title">杉戸・宮代薬剤師会の活動</h1>
+  <p class="hero-desc">
+    薬剤師は、薬を渡すだけではありません。<br>
+    地域の健康を守るために、さまざまな活動に取り組んでいます。
+  </p>
+</div>
+
+<div class="wrap">
+
+  <!-- 残薬問題 -->
+  <div class="activity" style="animation-delay:0.1s">
+    <div class="activity-header" style="background:var(--amber);"></div>
+    <div class="activity-body">
+      <div class="audience">
+        <span class="audience-badge">ケアマネさん向け</span>
+        <span class="audience-badge">介護職さん向け</span>
+      </div>
+      <span class="activity-tag" style="background:rgba(196,125,26,0.1); color:var(--amber);">RESIDUAL MED</span>
+      <h2 class="activity-title">残薬問題への取り組み</h2>
+      <p class="activity-desc">
+        飲み残しの薬「残薬」は、ただの余りではないかもしれません。
+        認知機能の低下や服薬管理の問題が隠れているサインのことがあります。
+        薬剤師・ケアマネ・介護職が連携することで、利用者さんの生活の安定につながります。
+      </p>
+      <a class="activity-link" href="zanyaku-flow.pdf" target="_blank"
+         style="background:rgba(196,125,26,0.1); color:var(--amber);">
+        対応フロー資料を見る →
+      </a>
+    </div>
+  </div>
+
+  <!-- 防災ボトル -->
+  <div class="activity" style="animation-delay:0.2s">
+    <div class="activity-header" style="background:var(--red);"></div>
+    <div class="activity-body">
+      <div class="audience">
+        <span class="audience-badge">地域住民向け</span>
+      </div>
+      <span class="activity-tag" style="background:rgba(185,64,64,0.1); color:var(--red);">DISASTER PREP</span>
+      <h2 class="activity-title">防災ボトル普及活動</h2>
+      <p class="activity-desc">
+        発災から48時間を乗り切るための「防災ボトル」を薬剤師会が企画しました。
+        お薬の備えはもちろん、LEDライト・エマージェンシーシートなど必要なものをコンパクトにまとめています。
+        かかりつけ薬局で薬剤師に相談しながら、自分専用の防災ボトルを作りましょう。
+      </p>
+      <a class="activity-link" href="bousai-bottle.jpeg" target="_blank"
+         style="background:rgba(185,64,64,0.1); color:var(--red);">
+        取扱説明書を見る →
+      </a>
+    </div>
+  </div>
+
+  <!-- MediCommons -->
+  <div class="activity" style="animation-delay:0.3s">
+    <div class="activity-header" style="background:var(--green);"></div>
+    <div class="activity-body">
+      <div class="audience">
+        <span class="audience-badge">薬局・医療関係者向け</span>
+      </div>
+      <span class="activity-tag" style="background:rgba(58,125,68,0.1); color:var(--green);">MEDICO</span>
+      <h2 class="activity-title">MediCommons（メディコ）</h2>
+      <p class="activity-desc">
+        地域の薬局が在庫を融通し合う仕組みです。
+        「あの薬が手に入らない」という患者さんの困りごとを、薬局間の連携で解決します。
+        平時のつながりが、災害時の迅速な医薬品供給体制の基盤にもなります。
+      </p>
+      <a class="activity-link" href="index.html"
+         style="background:rgba(58,125,68,0.1); color:var(--green);">
+        MediCommonsについて詳しく →
+      </a>
+    </div>
+  </div>
+
+  <!-- 商工祭 活動記録 -->
+  <div class="activity" style="animation-delay:0.4s">
+    <div class="activity-header" style="background:var(--teal);"></div>
+    <div class="activity-body">
+      <div class="audience">
+        <span class="audience-badge">地域住民向け</span>
+        <span class="audience-badge">活動記録</span>
+      </div>
+      <span class="activity-tag" style="background:rgba(42,143,127,0.1); color:var(--teal);">REPORT</span>
+      <h2 class="activity-title">第2回杉戸町商工祭への参加</h2>
+      <p class="activity-desc">
+        令和7年（2025年）11月23日（日）、ココティすぎとにて開催された第2回杉戸町商工祭に参加しました。
+        薬剤師会ブースでは、スパイスと漢方の視点からチャイを紹介・販売。
+        シナモン・クローブ・カルダモンなど、身近なスパイスに秘められた薬学的な働きを、
+        来場者の皆さんにお伝えしました。
+      </p>
+      <a class="activity-link" href="chai-info.jpg" target="_blank"
+         style="background:rgba(42,143,127,0.1); color:var(--teal);">
+        チャイのしおりを見る →
+      </a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="site-footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-logo">
+          <img src="IMG_4080.png" alt="メディコ">Medi<span>Commons</span>
+        </div>
+        <div class="footer-brand-sub">薬局間相互融通の枠組み</div>
+      </div>
+      <div class="footer-info">
+        <strong>杉戸町商工会内　杉戸・宮代薬剤師会事務局</strong><br>
+        〒345-0036<br>埼玉県北葛飾郡杉戸町杉戸3-9-10<br>
+        ココティすぎと複合施設2階<br>
+        TEL：0480-32-3719　FAX：0480-32-3919
+      </div>
+      <div class="footer-links-col">
+        <a href="index.html">← MediCommonsトップへ</a>
+        <a href="https://r.goope.jp/sugimiya-pa/" target="_blank" rel="noopener">薬剤師会HP（グーぺ）</a>
+      </div>
+    </div>
+    <div class="footer-copy">© 杉戸・宮代薬剤師会</div>
+  </div>
+
+</div><!-- /wrap -->
+</body>
+</html>
