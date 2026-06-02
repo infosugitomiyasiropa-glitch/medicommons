@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediCommons（メディコ）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #F4F7F2;
+    --surface: #FFFFFF;
+    --green:   #3A7D44;
+    --teal:    #2A8F7F;
+    --amber:   #C47D1A;
+    --red:     #B94040;
+    --purple:  #7B5EA7;
+    --muted:   #7A8A82;
+    --border:  #D8E2D5;
+    --text:    #1C2A1E;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes popIn {
+    from { transform: scale(0.6); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+  @keyframes hlCycle {
+    0%,12%  { --hl: 0; }
+    14%,26% { --hl: 1; }
+    28%,40% { --hl: 2; }
+    42%,54% { --hl: 3; }
+    56%,68% { --hl: 4; }
+    70%,100%{ --hl: 99; }
+  }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(160deg, var(--bg) 0%, #E6EDE3 100%);
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--text);
+    padding: 32px 16px 48px;
+  }
+
+  .wrap { max-width: 720px; margin: 0 auto; }
+
+  /* ── HEADER ── */
+  .header {
+    text-align: center;
+    margin-bottom: 36px;
+    animation: fadeUp 0.7s ease both;
+  }
+  .header-tag {
+    display: inline-block;
+    background: var(--green); color: #fff;
+    border-radius: 4px; padding: 3px 14px;
+    font-size: 10px; font-family: 'Space Mono', monospace;
+    letter-spacing: 2px; margin-bottom: 14px;
+  }
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(34px, 6vw, 54px);
+    font-weight: 400; letter-spacing: -0.5px; margin-bottom: 6px;
+  }
+  .header h1 span { color: var(--green); }
+  .header p {
+    font-size: 13px; color: var(--muted);
+    font-family: 'Space Mono', monospace; letter-spacing: 1px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border-radius: 16px; padding: 26px 28px;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 20px rgba(58,125,68,0.08);
+  }
+  .card.border-green { border-left: 4px solid var(--green); }
+  .section-label {
+    font-size: 11px; color: var(--green); letter-spacing: 2px;
+    margin-bottom: 14px; font-family: 'Space Mono', monospace;
+  }
+
+  /* ── WHAT IS IT ── */
+  .what-text { font-size: 15px; line-height: 1.9; margin-bottom: 12px; }
+  .what-divider {
+    font-size: 15px; line-height: 1.9;
+    border-top: 1px solid var(--border); padding-top: 12px;
+  }
+
+  /* ── WHO CAN JOIN ── */
+  .join-grid {
+    display: flex; gap: 12px; flex-wrap: wrap;
+  }
+  .join-item {
+    flex: 1 1 140px; background: var(--bg);
+    border-radius: 10px; padding: 14px;
+    border-top: 3px solid var(--green);
+  }
+  .join-icon  { font-size: 22px; margin-bottom: 6px; }
+  .join-label { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .join-sub   { font-size: 11px; color: var(--muted); line-height: 1.6; }
+
+  /* ── NETWORK SVG ── */
+  .network-note {
+    font-size: 12px; color: var(--muted);
+    margin-bottom: 16px; line-height: 1.7;
+  }
+  #mesh-svg { display: block; margin: 0 auto; overflow: visible; }
+  .edge { transition: stroke 0.4s, stroke-width 0.4s, opacity 0.4s; }
+  .node-circle-bg  { transition: opacity 0.3s; }
+  .node-circle-fg  { transition: fill 0.3s, stroke 0.3s; }
+  .node-label-txt  { transition: fill 0.3s; }
+
+  /* ── HOW IT WORKS ── */
+  .steps-grid {
+    display: flex; gap: 12px; flex-wrap: wrap;
+  }
+  .step-card {
+    flex: 1 1 180px; border-radius: 12px; padding: 18px 16px;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    cursor: pointer;
+    display: flex; flex-direction: column;
+    transition: border-color 0.3s, background 0.3s,
+                transform 0.3s, box-shadow 0.3s;
+  }
+  .step-card:hover {
+    transform: translateY(-3px);
+  }
+  .step-icon  { font-size: 26px; margin-bottom: 8px; }
+  .step-num   {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; font-weight: 700; margin-bottom: 5px;
+  }
+  .step-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .step-desc  { font-size: 12px; color: var(--muted); line-height: 1.7; flex: 1; }
+
+  /* ── BENEFITS ── */
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 14px;
+  }
+  .benefit-card {
+    border-radius: 10px; padding: 16px 14px; background: var(--bg);
+  }
+  .benefit-icon  { font-size: 26px; margin-bottom: 8px; }
+  .benefit-title { font-size: 13px; font-weight: 700; margin-bottom: 5px; }
+  .benefit-desc  { font-size: 11px; color: var(--muted); line-height: 1.7; }
+
+  /* ── FOOTER ── */
+  .footer { text-align: center; margin-top: 8px; }
+  .footer-inner {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--surface); border-radius: 40px;
+    padding: 10px 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    font-size: 12px; color: var(--muted);
+  }
+  .footer-inner img {
+    width: 36px; height: 36px; object-fit: contain;
+  }
+  .footer-sep { color: var(--border); }
+
+  /* ── DOWNLOAD BUTTON ── */
+  .dl-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    align-self: flex-start;
+    margin-top: auto;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 11px; font-family: 'Space Mono', monospace;
+    font-weight: 700; letter-spacing: 0.5px;
+    text-decoration: none;
+    border: 1.5px solid currentColor;
+    transition: background 0.2s, color 0.2s;
+  }
+  .dl-btn:hover { opacity: 0.8; }
+  .dl-btn::before { content: '↓'; font-size: 13px; }
+
+  /* staggered fade-up */
+  .fade1 { animation: fadeUp 0.7s 0.1s both; }
+  .fade2 { animation: fadeUp 0.7s 0.15s both; }
+  .fade3 { animation: fadeUp 0.7s 0.2s both; }
+  .fade4 { animation: fadeUp 0.7s 0.25s both; }
+  .fade5 { animation: fadeUp 0.7s 0.3s both; }
+  .fade6 { animation: fadeUp 0.7s 0.4s both; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-tag">SUGITO-MIYASHIRO PHARMACISTS ASSOC.</div>
+    <h1>Medi<span>Commons</span></h1>
+    <p>メディコ ― 薬局間相互融通の枠組み</p>
+  </div>
+
+  <!-- WHAT IS IT -->
+  <div class="card border-green fade1">
+    <div class="section-label">WHAT IS IT?<br>
+    ＜メディコってなんだろう？＞
+    </div>
+    <p class="what-text">
+      MediCommonsは、<strong>薬局間で医薬品を融通し合うための制度的な枠組み</strong>です。
+      ITシステムではなく、薬局間の直接のやりとりを支える<strong>規程・ルール</strong>で地域の仕組みを回します。
+    </p>
+    <p class="what-divider">
+      薬を融通し合うことで、薬局間が顔の見える関係になる。<br>
+      信頼で繋がった薬局だから、<strong>災害時には助け合って（互助）医薬品を供給できる。</strong>
+    </p>
+  </div>
+
+  <!-- WHO CAN JOIN -->
+  <div class="card fade2">
+    <div class="section-label">WHO CAN JOIN?<br>
+       ＜参加方法＞</div>
+    <div class="join-grid">
+      <div class="join-item">
+        <div class="join-icon">✅</div>
+        <div class="join-label">加盟の意思表明</div>
+        <div class="join-sub">参加したいという意志があること</div>
+      </div>
+      <div class="join-item">
+        <div class="join-icon">🏥</div>
+        <div class="join-label">薬局としての実態</div>
+        <div class="join-sub">実際に薬局を運営していること</div>
+      </div>
+      <div class="join-item">
+        <div class="join-icon">🗺️</div>
+        <div class="join-label">隣接市町もO K</div>
+        <div class="join-sub">隣接地域の薬局も参加できる設計</div>
+      </div>
+      <div class="join-item">
+        <div class="join-icon">🚫</div>
+        <div class="join-label">会員資格は「推奨」</div>
+        <div class="join-sub">薬剤師会員でなくても参加できる。（とはいえ、会員加盟を推奨します）</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NETWORK -->
+  <div class="card fade3">
+    <div class="section-label">NETWORK<br>
+       ＜仕様＞</div>
+    <p class="network-note">ハブや仲介者は存在しません。参加薬局間で直接・相互につながりネットワークを形成します。</p>
+    <svg id="mesh-svg" width="100%" viewBox="0 0 400 350" xmlns="http://www.w3.org/2000/svg">
+      <!-- edges -->
+      <line class="edge" id="e01" x1="200" y1="55"  x2="345" y2="145"/>
+      <line class="edge" id="e02" x1="200" y1="55"  x2="290" y2="295"/>
+      <line class="edge" id="e03" x1="200" y1="55"  x2="110" y2="295"/>
+      <line class="edge" id="e04" x1="200" y1="55"  x2="55"  y2="145"/>
+      <line class="edge" id="e12" x1="345" y1="145" x2="290" y2="295"/>
+      <line class="edge" id="e13" x1="345" y1="145" x2="110" y2="295"/>
+      <line class="edge" id="e14" x1="345" y1="145" x2="55"  y2="145"/>
+      <line class="edge" id="e23" x1="290" y1="295" x2="110" y2="295"/>
+      <line class="edge" id="e24" x1="290" y1="295" x2="55"  y2="145"/>
+      <line class="edge" id="e34" x1="110" y1="295" x2="55"  y2="145"/>
+
+      <!-- center label -->
+      <text x="200" y="182" text-anchor="middle"
+        fill="#7A8A82" font-size="10"
+        font-family="'Noto Sans JP',sans-serif" opacity="0.45">参加薬局間 直接融通</text>
+
+      <!-- nodes -->
+      <g class="node" data-idx="0">
+        <circle class="node-circle-bg" cx="200" cy="55"  r="28" fill="#3A7D44" opacity="0.10"/>
+        <circle class="node-circle-fg" cx="200" cy="55"  r="18" fill="#FFFFFF" stroke="#3A7D44" stroke-width="2"/>
+        <text class="node-label-txt" x="200" y="59"  text-anchor="middle" fill="#3A7D44" font-size="10" font-family="'Space Mono',monospace" font-weight="700">A</text>
+        <text x="200" y="95"  text-anchor="middle" fill="#7A8A82" font-size="10" font-family="'Noto Sans JP',sans-serif">薬局A</text>
+      </g>
+      <g class="node" data-idx="1">
+        <circle class="node-circle-bg" cx="345" cy="145" r="28" fill="#2A8F7F" opacity="0.10"/>
+        <circle class="node-circle-fg" cx="345" cy="145" r="18" fill="#FFFFFF" stroke="#2A8F7F" stroke-width="2"/>
+        <text class="node-label-txt" x="345" y="149" text-anchor="middle" fill="#2A8F7F" font-size="10" font-family="'Space Mono',monospace" font-weight="700">B</text>
+        <text x="345" y="185" text-anchor="middle" fill="#7A8A82" font-size="10" font-family="'Noto Sans JP',sans-serif">薬局B</text>
+      </g>
+      <g class="node" data-idx="2">
+        <circle class="node-circle-bg" cx="290" cy="295" r="28" fill="#C47D1A" opacity="0.10"/>
+        <circle class="node-circle-fg" cx="290" cy="295" r="18" fill="#FFFFFF" stroke="#C47D1A" stroke-width="2"/>
+        <text class="node-label-txt" x="290" y="299" text-anchor="middle" fill="#C47D1A" font-size="10" font-family="'Space Mono',monospace" font-weight="700">C</text>
+        <text x="290" y="335" text-anchor="middle" fill="#7A8A82" font-size="10" font-family="'Noto Sans JP',sans-serif">薬局C</text>
+      </g>
+      <g class="node" data-idx="3">
+        <circle class="node-circle-bg" cx="110" cy="295" r="28" fill="#B94040" opacity="0.10"/>
+        <circle class="node-circle-fg" cx="110" cy="295" r="18" fill="#FFFFFF" stroke="#B94040" stroke-width="2"/>
+        <text class="node-label-txt" x="110" y="299" text-anchor="middle" fill="#B94040" font-size="10" font-family="'Space Mono',monospace" font-weight="700">D</text>
+        <text x="110" y="335" text-anchor="middle" fill="#7A8A82" font-size="10" font-family="'Noto Sans JP',sans-serif">薬局D</text>
+      </g>
+      <g class="node" data-idx="4">
+        <circle class="node-circle-bg" cx="55"  cy="145" r="28" fill="#7B5EA7" opacity="0.10"/>
+        <circle class="node-circle-fg" cx="55"  cy="145" r="18" fill="#FFFFFF" stroke="#7B5EA7" stroke-width="2"/>
+        <text class="node-label-txt" x="55"  y="149" text-anchor="middle" fill="#7B5EA7" font-size="10" font-family="'Space Mono',monospace" font-weight="700">E</text>
+        <text x="55" y="185"  text-anchor="middle" fill="#7A8A82" font-size="10" font-family="'Noto Sans JP',sans-serif">薬局E</text>
+      </g>
+
+      <!-- dashed border -->
+      <rect x="4" y="4" width="392" height="342" rx="12"
+        stroke="#D8E2D5" stroke-width="1.5" stroke-dasharray="8 4" fill="none" opacity="0.4"/>
+      <!-- MediCommons label inside border -->
+      <text x="20" y="28" font-family="'DM Serif Display', serif" font-size="18" font-weight="400">
+        <tspan fill="#1C2A1E">Medi</tspan><tspan fill="#3A7D44">Commons</tspan>
+      </text>
+      <text x="20" y="44" font-family="'Space Mono', monospace" font-size="10"
+        fill="#7A8A82" opacity="0.7">（メディコ）</text>
+      <!-- corner note -->
+      <text x="388" y="332" text-anchor="end" fill="#7A8A82" font-size="9"
+        font-family="'Noto Sans JP',sans-serif" opacity="0.6">※ 隣接市町もＯＫ！</text>
+    </svg>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="card fade4">
+    <div class="section-label">HOW IT WORKS<br>
+      ＜メディコの使い方＞
+    </div>
+    <div class="steps-grid">
+      <div class="step-card" data-color="#3A7D44" onclick="selectStep(this)">
+        <div class="step-icon">📞</div>
+        <div class="step-num" style="color:#3A7D44">STEP 01</div>
+        <div class="step-title">参加申請 → 直接連絡</div>
+        <div class="step-desc">まず入会届を提出して参加。在庫が必要になったら、参加薬局へ直接問い合わせて下さい。</div>
+        <a class="dl-btn" style="color:#3A7D44"
+           href="https://github.com/infosugitomiyasiropa-glitch/medicommons/blob/main/entry-form.pdf"
+           download="MediCommons入会届.pdf">入会届</a>
+      </div>
+      <div class="step-card" data-color="#2A8F7F" onclick="selectStep(this)">
+        <div class="step-icon">🤝</div>
+        <div class="step-num" style="color:#2A8F7F">STEP 02</div>
+        <div class="step-title">双方で確認後、譲渡依頼書を発行・送付して下さい</div>
+        <div class="step-desc">提供できるかを2薬局間で確認し、融通可否が決まったら、譲渡依頼書を作成して送付する(FAX・メール等)。</div>
+        <a class="dl-btn" style="color:#2A8F7F"
+           href="https://github.com/infosugitomiyasiropa-glitch/medicommons/blob/main/transfer-form.pdf"
+           download="医薬品譲渡依頼書_様式.pdf">譲渡依頼書</a>
+      </div>
+      <div class="step-card" data-color="#C47D1A" onclick="selectStep(this)">
+        <div class="step-icon">📋</div>
+        <div class="step-num" style="color:#C47D1A">STEP 03</div>
+        <div class="step-title">規約に基づき実施</div>
+        <div class="step-desc">MediCommonsの規程に沿って譲渡・受領を完了する。</div>
+        <a class="dl-btn" style="color:#C47D1A"
+           href="https://github.com/infosugitomiyasiropa-glitch/medicommons/blob/main/rules.pdf"
+           download="杉戸宮代薬剤師会 MediCommons規約.pdf">規約を確認</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- BENEFITS -->
+  <div class="card fade5">
+    <div class="section-label">BENEFITS</div>
+    <div class="benefits-grid">
+      <div class="benefit-card" style="border-top:3px solid #3A7D44">
+        <div class="benefit-icon">💊</div>
+        <div class="benefit-title">患者さんへの<br>迅速対応</div>
+        <div class="benefit-desc">在庫がなかった場合、参加薬局さんから薬を融通することで患者さんの不自由を減らして下さい。</div>
+      </div>
+      <div class="benefit-card" style="border-top:3px solid #2A8F7F">
+        <div class="benefit-icon">📦</div>
+        <div class="benefit-title">過剰在庫<br>廃棄の削減</div>
+        <div class="benefit-desc">余った薬を、それが必要な薬局に譲渡し、廃棄ロスを減らす機能を付与。</div>
+      </div>
+      <div class="benefit-card" style="border-top:3px solid #C47D1A">
+        <div class="benefit-icon">👋</div>
+        <div class="benefit-title">薬局同士が<br>仲良くなる</div>
+        <div class="benefit-desc">交流を重ねることで、顔の見える関係が育まれる</div>
+      </div>
+      <div class="benefit-card" style="border-top:3px solid #B94040">
+        <div class="benefit-icon">🆘</div>
+        <div class="benefit-title">災害時の助け合い</div>
+        <div class="benefit-desc">日常のつながりが、いざというときの地域医療を支える</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer fade6">
+    <div class="footer-inner">
+      <img src="IMG_4080.jpeg" alt="メディコ">
+      <span>メディコ</span>
+      <span class="footer-sep">|</span>
+
+      
+      <span>杉戸・宮代薬剤師会</span>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+// ── NETWORK highlight animation ──
+const NODES = [
+  { idx:0, color:'#3A7D44' },
+  { idx:1, color:'#2A8F7F' },
+  { idx:2, color:'#C47D1A' },
+  { idx:3, color:'#B94040' },
+  { idx:4, color:'#7B5EA7' },
+];
+const EDGE_MAP = {
+  0: ['e01','e02','e03','e04'],
+  1: ['e01','e12','e13','e14'],
+  2: ['e02','e12','e23','e24'],
+  3: ['e03','e13','e23','e34'],
+  4: ['e04','e14','e24','e34'],
+};
+const BORDER_COLOR = '#D8E2D5';
+
+function setHighlight(idx) {
+  // reset all edges
+  document.querySelectorAll('.edge').forEach(e => {
+    e.setAttribute('stroke', BORDER_COLOR);
+    e.setAttribute('stroke-width', '1.5');
+    e.setAttribute('stroke-dasharray', '5 4');
+    e.setAttribute('opacity', '0.45');
+  });
+  // reset all nodes
+  NODES.forEach(n => {
+    const g = document.querySelector(`.node[data-idx="${n.idx}"]`);
+    g.querySelector('.node-circle-bg').setAttribute('opacity', '0.10');
+    g.querySelector('.node-circle-fg').setAttribute('fill', '#FFFFFF');
+    g.querySelector('.node-label-txt').setAttribute('fill', n.color);
+  });
+  if (idx === null) return;
+  // highlight edges
+  (EDGE_MAP[idx] || []).forEach(id => {
+    const e = document.getElementById(id);
+    if (!e) return;
+    e.setAttribute('stroke', '#3A7D44');
+    e.setAttribute('stroke-width', '2.5');
+    e.removeAttribute('stroke-dasharray');
+    e.setAttribute('opacity', '0.85');
+  });
+  // highlight node
+  const n = NODES[idx];
+  const g = document.querySelector(`.node[data-idx="${n.idx}"]`);
+  g.querySelector('.node-circle-bg').setAttribute('opacity', '0.18');
+  g.querySelector('.node-circle-fg').setAttribute('fill', n.color);
+  g.querySelector('.node-label-txt').setAttribute('fill', '#FFFFFF');
+}
+
+const SEQ = [0,1,2,3,4,null,null];
+let cur = 0;
+setInterval(() => {
+  setHighlight(SEQ[cur % SEQ.length]);
+  cur++;
+}, 800);
+
+// ── STEP card click ──
+function selectStep(el) {
+  document.querySelectorAll('.step-card').forEach(c => {
+    c.style.borderColor = '#D8E2D5';
+    c.style.background  = '#F4F7F2';
+    c.style.transform   = '';
+    c.style.boxShadow   = '';
+  });
+  const color = el.dataset.color;
+  el.style.borderColor = color;
+  el.style.background  = color + '0D';
+  el.style.transform   = 'translateY(-3px)';
+  el.style.boxShadow   = `0 8px 20px ${color}22`;
+}
+</script>
+</body>
+</html>
