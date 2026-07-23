@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="作業ボード">
 <meta name="theme-color" content="#EEF0ED">
 <title>作業ボード</title>
-  <link rel="apple-touch-icon" href="apple-icon.PNG">
+<link rel="apple-touch-icon" href="apple-icon.png">
 <style>
   :root{
     --paper:#EEF0ED;
@@ -117,6 +117,8 @@
   .foot .dl{display:inline-flex;align-items:center;gap:5px}
   .foot .act{background:var(--surface-2);border:1px solid var(--hair);color:var(--ink-soft);
     font-family:var(--mono);font-size:12.5px;border-radius:8px;padding:7px 12px;min-height:36px;cursor:pointer}
+  .foot a.gcal{display:inline-flex;align-items:center;text-decoration:none;color:var(--doing);
+    border-color:var(--doing);background:var(--doing-wash)}
   .meta-line{display:flex;gap:10px;flex-wrap:wrap;width:100%;margin-bottom:2px}
 
   .inline-edit{font-family:var(--sans);font-size:16px;color:var(--ink);width:100%;
@@ -234,6 +236,10 @@
       <input type="date" id="fDue">
     </div>
   </div>
+  <div class="fld">
+    <label>期限の時刻（任意 — 空なら「その日中」）</label>
+    <input type="time" id="fDueTime">
+  </div>
   <div class="opt-head">患者リンク（任意）</div>
   <div class="fld">
     <label>患者名</label>
@@ -295,12 +301,44 @@ function relLabel(iso){
   if(d === 1) return '昨日';
   return d + '日前';
 }
-function dueLabel(iso){
+function dueMoment(t){
+  if(!t.due) return null;
+  return new Date(t.due + 'T' + (t.dueTime || '23:59'));
+}
+function dueLabel(iso, time){
   const d = relDays(iso);
+  const hm = time ? ' ' + time : '';
+  if(time && d === 0){
+    const ms = new Date(iso+'T'+time) - new Date();
+    if(ms < 0) return { text:'期限切れ 今日'+hm, over:true };
+    const h = Math.floor(ms/3600000), m = Math.floor(ms%3600000/60000);
+    return { text:'今日'+hm+'（あと'+(h>0? h+'時間':'')+m+'分）', over:true };
+  }
   if(d > 0) return { text:'期限切れ ' + d + '日', over:true };
-  if(d === 0) return { text:'期限 今日', over:true };
-  if(d === -1) return { text:'期限 明日', over:false };
-  return { text:'期限 ' + (-d) + '日後', over:false };
+  if(d === 0) return { text:'期限 今日'+hm, over:true };
+  if(d === -1) return { text:'期限 明日'+hm, over:false };
+  return { text:'期限 ' + (-d) + '日後'+hm, over:false };
+}
+function gcalUrl(t){
+  const pad = n => String(n).padStart(2,'0');
+  const stamp = d => d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())
+                   + 'T'+pad(d.getHours())+pad(d.getMinutes())+'00';
+  let dates;
+  if(t.dueTime){
+    const s = new Date(t.due+'T'+t.dueTime);
+    const e = new Date(s.getTime() + 30*60000);
+    dates = stamp(s)+'/'+stamp(e);
+  }else{
+    const d = t.due.replace(/-/g,'');
+    const n = new Date(t.due+'T00:00'); n.setDate(n.getDate()+1);
+    dates = d+'/'+n.getFullYear()+pad(n.getMonth()+1)+pad(n.getDate());
+  }
+  const detail = [t.next ? '次の一手: '+t.next : '', t.patient ? '患者: '+t.patient : '']
+                 .filter(Boolean).join('\n');
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+       + '&text=' + encodeURIComponent(t.title)
+       + '&dates=' + dates
+       + (detail ? '&details=' + encodeURIComponent(detail) : '');
 }
 function fmtDateTime(iso){
   const d = new Date(iso), p = n => String(n).padStart(2,'0');
@@ -379,15 +417,23 @@ function render(){
     }
     let dueHtml = '';
     if(t.due){
-      const d = dueLabel(t.due);
+      const d = dueLabel(t.due, t.dueTime);
       dueHtml = '<span class="due' + (d.over && t.status!=='done' ? ' over':'') + '">◇ ' + d.text + '</span>';
     }
     let urgent = false, flagHtml = '';
     if(t.status !== 'done' && t.due){
       const dd = relDays(t.due);
       if(dd > 0){ urgent = true; flagHtml = '<div class="flag over">期限超過</div>'; }
-      else if(dd === 0){ urgent = true; flagHtml = '<div class="flag today">今日中</div>'; }
+      else if(dd === 0){
+        urgent = true;
+        const past = t.dueTime && (new Date(t.due+'T'+t.dueTime) < new Date());
+        flagHtml = past ? '<div class="flag over">時刻超過</div>'
+                        : '<div class="flag today">今日中</div>';
+      }
     }
+    const gcalHtml = t.due
+      ? '<a class="act gcal" href="'+gcalUrl(t)+'" target="_blank" rel="noopener">📅 カレンダーへ</a>'
+      : '';
     const opts = ['todo','doing','waiting','done'].map(s =>
       '<option value="'+s+'"'+(s===t.status?' selected':'')+'>'+LABELS[s]+'</option>').join('');
     return (
@@ -402,8 +448,10 @@ function render(){
       +     '<span>作成 '+fmtDateTime(t.created)+'</span>'
       +     '<span>更新 '+relLabel(t.updated||t.created)+'</span></div>'
       +   '<label class="dl">期限<input type="date" class="di" data-act="due" value="'+(t.due||'')+'"></label>'
+      +   (t.due ? '<label class="dl">時刻<input type="time" class="di" data-act="duetime" value="'+(t.dueTime||'')+'"></label>' : '')
       +   '<select class="st" data-act="status">'+opts+'</select>'
       +   '<span class="spacer"></span>'
+      +   gcalHtml
       +   '<button class="act" data-act="del">削除</button>'
       + '</div></div>'
     );
@@ -422,6 +470,7 @@ function addTask(){
     dob: document.getElementById('fDob').value || null,
     status: document.getElementById('fStatus').value,
     due: document.getElementById('fDue').value || null,
+    dueTime: document.getElementById('fDueTime').value || null,
     created: now, updated: now
   });
   saveTasks(); render(); closeSheet();
@@ -433,7 +482,14 @@ function setStatus(id, status){
 }
 function setDue(id, due){
   const t = tasks.find(x=>x.id===id); if(!t) return;
-  t.due = due || null; t.updated = new Date().toISOString();
+  t.due = due || null;
+  if(!t.due) t.dueTime = null;
+  t.updated = new Date().toISOString();
+  saveTasks(); render();
+}
+function setDueTime(id, time){
+  const t = tasks.find(x=>x.id===id); if(!t) return;
+  t.dueTime = time || null; t.updated = new Date().toISOString();
   saveTasks(); render();
 }
 function setDob(id, dob){
@@ -484,6 +540,7 @@ function openSheet(){
   document.getElementById('fPatient').value = '';
   document.getElementById('fDob').value = '';
   document.getElementById('fDue').value = '';
+  document.getElementById('fDueTime').value = '';
   document.getElementById('fStatus').value = 'todo';
   document.getElementById('sheet').classList.add('on');
   document.getElementById('scrim').classList.add('on');
@@ -538,6 +595,7 @@ document.getElementById('tabs').addEventListener('click', e=>{
 document.getElementById('list').addEventListener('click', e=>{
   const card = e.target.closest('.card'); if(!card) return;
   const id = card.dataset.id;
+  if(e.target.closest('a.gcal')) return;
   const btn = e.target.closest('button[data-act]');
   if(btn){ if(btn.dataset.act==='del') delTask(id); return; }
   const editEl = e.target.closest('[data-edit]');
@@ -549,6 +607,8 @@ document.getElementById('list').addEventListener('change', e=>{
   if(sel){ setStatus(card.dataset.id, sel.value); return; }
   const di = e.target.closest('input[data-act="due"]');
   if(di){ setDue(card.dataset.id, di.value); return; }
+  const dt = e.target.closest('input[data-act="duetime"]');
+  if(dt){ setDueTime(card.dataset.id, dt.value); return; }
   const db = e.target.closest('input[data-act="dob"]');
   if(db){ setDob(card.dataset.id, db.value); }
 });
